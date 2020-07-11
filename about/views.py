@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib import messages
+
 from about.models import Application
 import pandas as pd
 import random
@@ -10,8 +12,8 @@ import random
 
 def dashboard(request):
   if request.user.is_authenticated:
-
-    return render(request, "dashboard.html", {})
+    apps = Application.objects.all()
+    return render(request, "dashboard.html", {"apps": apps})
   else:
     return redirect('/login')
 
@@ -63,12 +65,15 @@ def grade(request):
         graded_app.graders += user.username + ','
         graded_app.num_graders += 1
         if graded_app.rating == 0:
-          graded_app.rating = request.POST['rating']
+          graded_app.rating = int(request.POST['rating'])
         else:
-          graded_app.rating = (graded_app.rating + request.POST['rating']) / graded_app.num_graders
+          graded_app.rating = (graded_app.rating + int(request.POST['rating'])) / graded_app.num_graders
         print(graded_app.graders)
         print(graded_app.num_graders)
         graded_app.save()
+        messages.success(request, 'Previous app graded!')
+      else:
+        messages.info(request, 'Previous app already graded >2 times, sorry your grade did not go through')
     
     # display new application
     try:

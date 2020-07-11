@@ -91,7 +91,20 @@
       <div style="margin: 10px">
         <small>A random ungraded application should appear. Select a rating and hit submit to confirm. Then press next app to move to the next app.</small>
       </div>
-      
+      {% if messages %}
+        {% for message in messages %}
+          {% if message.tags == 'success' %}
+            <div class="alert alert-primary" role="alert">
+              {{message}}
+            </div>
+          {% endif %}
+          {% if message.tags == 'info' %}
+            <div class="alert alert-danger" role="alert">
+              {{message}}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
       <div class="card mx-4" >
         <ul class="list-group list-group-flush">
           <li class="list-group-item"> <span class="app-item">Name:</span> {{ name }}</li>
@@ -112,7 +125,7 @@
             <div class="form-group mr-4">
               <input type="hidden" value="{{email}}" name="email" />
               <label for="rating" class="mr-2">Rating</label>
-              <select class="form-control" name="rating" id="rating" required>
+              <select class="form-control" name="rating" type=number id="rating" required>
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
