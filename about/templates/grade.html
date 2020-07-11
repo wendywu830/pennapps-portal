@@ -1,0 +1,144 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="generator" content="Jekyll v4.0.1">
+    <title>PennApps Portal</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha384-SI27wrMjH3ZZ89r4o+fGIJtnzkAnFs3E4qz9DIYioCQ5l9Rd/7UAa8DHcaL8jkWt" crossorigin="anonymous">    
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+      .app-item {
+        font-weight: 550;
+        font-size: 110%
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+  </head>
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">PennApps Portal</a>
+  <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link" href="/logout">Log out</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+              <span data-feather="file"></span>
+              Browse
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/grade">
+              <span data-feather="users"></span>
+              Grade
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stats">
+              <span data-feather="shopping-cart"></span>
+              Stats
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/manage">
+              <span data-feather="bar-chart-2"></span>
+              Manage
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/add">
+              <span data-feather="bar-chart-2"></span>
+              Add apps
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3>Grade Applications</h3>
+        <p>Apps Left: {{num_left}}</p>
+      </div>
+      <div style="margin: 10px">
+        <small>A random ungraded application should appear. Select a rating and hit submit to confirm. Then press next app to move to the next app.</small>
+      </div>
+      
+      <div class="card mx-4" >
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"> <span class="app-item">Name:</span> {{ name }}</li>
+          <li class="list-group-item"> <span class="app-item">Email:</span> {{ email }}</li>
+          <li class="list-group-item"> <span class="app-item">School:</span> {{ school }}</li>
+          <li class="list-group-item"> <span class="app-item">Free Response 1:</span> 
+            <p>{{ app_text1 }}</p>
+          </li>
+          <li class="list-group-item"> <span class="app-item">Free Response 2:</span> 
+            <p>{{ app_text2 }}</p>
+          </li>
+          <li class="list-group-item"> <span class="app-item">First Hackathon?</span>  {{ first_hackathon }}</li>
+          <li class="list-group-item"> <span class="app-item">Github:</span> <a href="{{ github }}" target="_blank">{{ github }}</a></li>
+        </ul>
+        <div class="card-body">
+          <form class="form-inline" method="POST" action="/grade/">
+            {% csrf_token %}
+            <div class="form-group mr-4">
+              <input type="hidden" value="{{email}}" name="email" />
+              <label for="rating" class="mr-2">Rating</label>
+              <select class="form-control" name="rating" id="rating" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+              </select>
+            </div>
+            <div class="form-group mr-4">
+              <label for="comments" class="mr-2">Comments</label>
+              <input type="text" class="form-control" name="comments" id="comments">
+            </div>
+            <div class="form-check mr-4">
+              <label for="save" class="mr-2">Confirm Rating</label>
+              <input class="form-check-input" type="checkbox" value="save" id="save" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Next App</button>
+          </form>
+        </div>
+      </div>
+    
+    </main>
+  </div>
+</div>
+</html>
