@@ -1,0 +1,9 @@
+Django==2.2.7
+pandas==0.24.2
+whitenoise==5.1.0
+gunicorn==20.0.4
+dj_database_url==0.5.0
+python-dotenv==0.14.0
+psycopg2==2.7.7
+pytz==2019.1
+simplejson==3.17.2

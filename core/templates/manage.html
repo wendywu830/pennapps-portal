@@ -1,0 +1,134 @@
+{% extends 'nav.html' %}
+{% block content %}
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2 border-bottom">
+        <h1 class="h2">Manage</h1>
+      </div>
+      <small>Displays apps graded 2x or with status if you filter</small>
+      <form name="emailForm" class="form-inline" method="POST" action="/manage/">
+        {% csrf_token %}
+        <div class="form-group mr-2">
+          <select class="form-control" name="action" id="action" required>
+            <option>Accept</option>
+            <option>Reject</option>
+            <option>Waitlist</option>
+            <option>N/A</option>
+            <option>Reset</option>
+          </select>
+        </div>
+        <button class="btn btn-outline-primary mr-4" type="button" id="button">Apply to checked apps</button>
+      </form>
+      Download <a href='/export_graded/'>graded ({{graded}})</a> /  <a href='/export_accepted/'>accepted ({{num_acc}})</a> / 
+      <a href='/export_rejected/'>rejected ({{num_rej}})</a> / <a href='/export_waitlisted/'>waitlisted ({{num_wait}})</a> apps out of <a href='/export_total/'>total ({{total}})</a> as CSV file // Apps left: {{num_left}}
+       <form name="filterForm" class="form-inline mt-2" method="POST" action="/manage/">
+        {% csrf_token %}
+        <div class="form-group mr-4">
+          <label for="rating" class="mr-2">Rating > </label>
+          <input type="number" class="form-control mr-2" step="0.5" min="0" max="10" name="rating" id="rating" required>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input" name="is_priority"id="check">
+          <label class="form-check-label" for="inlineCheckbox1">Priority only</label>
+        </div>
+        <button class="btn btn-primary mr-2" type="submit">Filter</button>
+      </form>
+      <table
+      id="table"
+      data-toggle="table"
+      data-select-item-name="selectItemName"
+      data-toolbar="#show"
+      data-search="true"
+      data-search-text=""
+      data-height="620"
+      data-sortable="true"
+      data-pagination="true">
+        <thead>
+          <tr>
+            <th data-field="state" data-checkbox="true"></th>
+            <th data-field="name" data-sortable="true">Name</th>
+            <th data-field="email" data-sortable="true">Email</th>
+            <th data-field="rating" data-sortable="true">Rating</th>
+            <th data-field="num" data-sortable="true">Num Graders</th>
+            <th data-field="status" data-sortable="true" data-cell-style="cellStyle">Status</th>
+            <th data-field="comments" data-sortable="true">Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in apps %}
+          <tr>
+            <td></td>
+            <td>{{app.name}}</td>
+            <td>{{app.email}}</td>
+            <td>{{app.rating}}</td>
+            <td>{{app.num_graders}}</td>
+            <td>{{app.status}}</td>
+            <td>{{app.comments}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+<script>
+
+  var $table = $('#table')
+  var $button = $('#button')
+
+  $(function() {
+
+    $(document).ajaxStop(function(){
+      window.location.reload();
+    });
+    $button.click(function () {
+      var option = $( "#action option:selected" ).text();
+      const selections = $table.bootstrapTable('getSelections')
+      
+      $.ajax({
+          method: "POST",
+          url: "{% url 'manage' %}",
+          headers: {'X-CSRFToken': '{{ csrf_token }}'},
+          dataType: 'json',
+          contentType: "application/json",
+          data: JSON.stringify({
+            action: option,
+            people: selections
+          }),
+          success: function (res, status) {
+            window.location.reload()
+          },
+          error: function (res) {
+          }
+      })
+    })
+  })
+
+  function cellStyle(value, row, index) {
+    if (value === 'Accepted') {
+      return {
+        css: {
+          background: '#c3ebc3'
+        }
+      }
+    }
+    if (value === 'Rejected') {
+      return {
+        css: {
+          background: '#e0a19f'
+        }
+      }
+    }
+    if (value === 'Waitlisted') {
+      return {
+        css: {
+          background: '#fcfac0'
+        }
+      }
+    }
+    return {
+    }
+  }
+</script>
+{% endblock %}

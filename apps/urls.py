@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from about import views
+from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +27,11 @@ urlpatterns = [
     path('grade/', views.grade, name='grade'),
     path('add/', views.add_apps, name='add'),
     path('stats/', views.stats, name='stats'),
-
+    path('manage/', views.manage, name='manage'),
+    path('export_graded/', views.export_graded, name='export_graded'),
+    path('export_accepted/', views.export_accepted, name='export_accepted'),
+    path('export_rejected/', views.export_rejected, name='export_rejected'),
+    path('export_waitlisted/', views.export_waitlisted, name='export_waitlisted'),
+    path('export_total/', views.export_total, name='export_total'),
+    path('clear/', views.clear, name='clear'),
 ]
